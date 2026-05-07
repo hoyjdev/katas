@@ -1,6 +1,15 @@
+from dataclasses import dataclass
+from datetime import date
+
+
 class BankAccount:
+    def __init__(self):
+        self.transactions = []
+
     def deposit(self, amount: int) -> None:
-        pass
+        self.transactions += Banker.transact(
+            self.transactions[-1][2], amount, date.today()
+        )
 
     def withdraw(self, amount: int) -> None:
         pass
@@ -15,6 +24,19 @@ class BankAccount:
 
         # This example statement shows one withdrawal on 14th January 2012, and two deposits on 13th and 10th January respectively.
         pass
+
+
+@dataclass
+class Transaction:
+    amount: int
+    balance: int
+    date: date = date.today()
+
+
+class Banker:
+    @staticmethod
+    def transact(balance: int, amount: int, date: date) -> tuple[str, int, int]:
+        return date.strftime("%Y-%m-%d"), amount, balance + amount
 
 
 def main():
