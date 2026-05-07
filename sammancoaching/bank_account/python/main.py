@@ -7,12 +7,14 @@ class BankAccount:
         self.transactions = []
 
     def deposit(self, amount: int) -> None:
-        self.transactions += Banker.transact(
-            self.transactions[-1][2], amount, date.today()
-        )
+        self.transactions = self.transactions + [
+            Banker.transact(self.transactions[-1].balance, amount, date.today())
+        ]
 
     def withdraw(self, amount: int) -> None:
-        pass
+        self.transactions = self.transactions + [
+            Banker.transact(self.transactions[-1].balance, -amount, date.today())
+        ]
 
     def printStatement(self) -> None:
         # When you call the ‘printStatement’ method, something like the following is printed on standard output:
@@ -35,8 +37,8 @@ class Transaction:
 
 class Banker:
     @staticmethod
-    def transact(balance: int, amount: int, date: date) -> tuple[str, int, int]:
-        return date.strftime("%Y-%m-%d"), amount, balance + amount
+    def transact(balance: int, amount: int, date: date) -> Transaction:
+        return Transaction(amount, balance + amount, date)
 
 
 def main():

@@ -38,15 +38,9 @@ class TestTransaction:
 
 class TestBanker:
     def test_returns_date_and_balance_after_transaction(self):
-        assert Banker.transact(0, 1000, datetime.date(2023, 1, 1)) == (
-            "2023-01-01",
-            1000,
-            1000,
-        )
+        actual = Banker.transact(0, 1000, datetime.date(2023, 1, 1))
+        assert actual == Transaction(1000, 1000, datetime.date(2023, 1, 1))
 
     def test_subtracts_money_from_the_balance(self):
-        assert Banker.transact(3000, -500, datetime.date(2023, 1, 1)) == (
-            "2023-01-01",
-            -500,
-            2500,
-        )
+        actual = Banker.transact(3000, -500, datetime.date(2023, 1, 1))
+        assert actual == Transaction(-500, 2500, datetime.date(2023, 1, 1))
