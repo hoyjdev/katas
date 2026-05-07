@@ -9,12 +9,12 @@ class BankAccount:
 
     def deposit(self, amount: int) -> None:
         self.transactions = self.transactions + [
-            Banker.transact(self.transactions, amount, datetime.today())
+            Banker.transact(self.transactions[-1:], amount, datetime.today())
         ]
 
     def withdraw(self, amount: int) -> None:
         self.transactions = self.transactions + [
-            Banker.transact(self.transactions, -amount, datetime.today())
+            Banker.transact(self.transactions[-1:], -amount, datetime.today())
         ]
 
     def printStatement(self) -> None:
