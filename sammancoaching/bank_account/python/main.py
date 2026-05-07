@@ -1,5 +1,6 @@
 from dataclasses import dataclass
-from datetime import date
+from datetime import datetime
+from time import sleep
 
 
 class BankAccount:
@@ -8,41 +9,54 @@ class BankAccount:
 
     def deposit(self, amount: int) -> None:
         self.transactions = self.transactions + [
-            Banker.transact(self.transactions[-1].balance, amount, date.today())
+            Banker.transact(self.transactions, amount, datetime.today())
         ]
 
     def withdraw(self, amount: int) -> None:
         self.transactions = self.transactions + [
-            Banker.transact(self.transactions[-1].balance, -amount, date.today())
+            Banker.transact(self.transactions, -amount, datetime.today())
         ]
 
     def printStatement(self) -> None:
-        # When you call the ‘printStatement’ method, something like the following is printed on standard output:
-
-        # Date       || Amount || Balance
-        # 2012-01-14 || -500   || 2500
-        # 2012-01-13 || 2000   || 3000
-        # 2012-01-10 || 1000   || 1000
-
-        # This example statement shows one withdrawal on 14th January 2012, and two deposits on 13th and 10th January respectively.
-        pass
+        print(Statement.for_txns(self.transactions))
 
 
 @dataclass
 class Transaction:
     amount: int
     balance: int
-    date: date = date.today()
+    timestamp: datetime = datetime.today()
 
 
 class Banker:
     @staticmethod
-    def transact(balance: int, amount: int, date: date) -> Transaction:
-        return Transaction(amount, balance + amount, date)
+    def transact(txns: list[Transaction], amount: int, ts: datetime) -> Transaction:
+        if not txns:
+            return Transaction(amount, amount, ts)
+
+        return Transaction(amount, txns[-1].balance + amount, ts)
+
+
+class Statement:
+    @staticmethod
+    def for_txns(txns: list[Transaction]) -> str:
+        sorted_txns = sorted(txns, key=lambda t: t.timestamp, reverse=True)
+        print_outs = [
+            f"{datetime.strftime(t.timestamp, '%Y-%m-%d')},{t.amount},{t.balance}\n"
+            for t in sorted_txns
+        ]
+        return "Date,Amount,Balance\n" + "".join(print_outs)
 
 
 def main():
-    print("Hello from python!")
+    account = BankAccount()
+    account.deposit(1000)
+    sleep(1)
+    account.deposit(2000)
+    sleep(1)
+    account.withdraw(500)
+    sleep(1)
+    account.printStatement()
 
 
 if __name__ == "__main__":
