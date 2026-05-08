@@ -4,6 +4,10 @@ from birthday import BirthdayData
 from matcher import Matcher
 from notifier import Notifier
 
+# TODO:
+# - clean up message creation
+# - simplify BirthdayGreeter core/shell boundaries
+
 
 class BirthdayGreeter:
     def __init__(self, birthday_data: BirthdayData, notifier: Notifier):
