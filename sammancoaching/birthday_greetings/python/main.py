@@ -13,6 +13,7 @@ class Birthday:
 class BirthdayData:
     @staticmethod
     def load() -> list[Birthday]:
+        # Can be local file, DB, whatever
         pass
 
 
@@ -25,10 +26,14 @@ class Mailer:
 class Matcher:
     @staticmethod
     def for_date(date: datetime.date, birthdays: list[Birthday]) -> list[Birthday]:
+        targets = {(date.month, date.day)}
+        if (date.month, date.day) == (2, 28):
+            targets.add((2, 29))
+
         return [
-            x
-            for x in birthdays
-            if x.date_of_birth.month == date.month and x.date_of_birth.day == date.day
+            b
+            for b in birthdays
+            if (b.date_of_birth.month, b.date_of_birth.day) in targets
         ]
 
 

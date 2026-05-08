@@ -61,13 +61,20 @@ def birthday_data():
         yield mock_svc
 
 
+@fixture
+def john():
+    return Birthday("Doe", "John", datetime.date(1990, 1, 1), "john.doe@example.com")
+
+
+@fixture
+def mary():
+    return Birthday("Ann", "Mary", datetime.date(1975, 9, 11), "mary.ann@example.com")
+
+
 class TestBirthdayGreeter:
     @freezegun.freeze_time("2023-01-01")
-    def test_sends_emails_on_birthday(self, birthday_data, mailer):
-        birthday_data.load.return_value = [
-            Birthday("Doe", "John", datetime.date(1990, 1, 1), "john.doe@example.com"),
-            Birthday("Ann", "Mary", datetime.date(1975, 9, 11), "mary.ann@example.com"),
-        ]
+    def test_sends_emails_on_birthday(self, birthday_data, john, mary, mailer):
+        birthday_data.load.return_value = [john, mary]
 
         BirthdayGreeter(birthday_data, mailer).greet()
 
@@ -80,20 +87,13 @@ class TestBirthdayGreeter:
 
 
 class TestMatcher:
-    def test_returns_birthdays_that_match_given_date(self):
-        john = Birthday(
-            "Doe", "John", datetime.date(1990, 1, 1), "john.doe@example.com"
-        )
-        mary = Birthday(
-            "Ann", "Mary", datetime.date(1975, 9, 11), "mary.ann@example.com"
-        )
+    def test_returns_birthdays_that_match_given_date(self, john, mary):
         assert Matcher.for_date(datetime.date(2023, 1, 1), [john, mary]) == [john]
 
-    # def test_returns_leap_day_birthdays_given_date_is_feb_28(self):
-    #     john = Birthday(
-    #         "Doe", "John", datetime.date(1990, 1, 1), "john.doe@example.com"
-    #     )
-    #     mary = Birthday(
-    #         "Ann", "Mary", datetime.date(2020, 2, 29), "mary.ann@example.com"
-    #     )
-    #     assert Matcher.for_date(datetime.date(2023, 2, 28), [john, mary]) == [mary]
+    def test_returns_leap_day_birthdays_given_date_is_feb_28(self, john, mary):
+        leaper = Birthday(
+            "Jones", "Leaper", datetime.date(2020, 2, 29), "leaper.jones@example.com"
+        )
+        assert Matcher.for_date(datetime.date(2023, 2, 28), [john, mary, leaper]) == [
+            leaper
+        ]
