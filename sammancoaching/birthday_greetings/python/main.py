@@ -1,5 +1,6 @@
 import datetime
 from dataclasses import dataclass
+from typing import Protocol
 
 
 @dataclass
@@ -17,9 +18,13 @@ class BirthdayData:
         pass
 
 
+class Notifier(Protocol):
+    def send(self, to: str, message: str) -> None: ...
+
+
 class Mailer:
-    @staticmethod
-    def mail(to: str, message: str):
+    def send(self, to: str, message: str) -> None:
+        # Implementation for sending email
         pass
 
 
@@ -38,9 +43,9 @@ class Matcher:
 
 
 class BirthdayGreeter:
-    def __init__(self, birthday_data: BirthdayData, mailer: Mailer):
+    def __init__(self, birthday_data: BirthdayData, notifier: Notifier):
         self.birthday_data = birthday_data
-        self.mailer = mailer
+        self.notifier = notifier
 
     def greet(self):
         today = datetime.date.today()
@@ -49,7 +54,7 @@ class BirthdayGreeter:
         for bday in matched:
             subject = "Subject: Happy birthday!"
             body = f"Happy birthday, dear {bday.first_name}!"
-            self.mailer.mail(bday.email, f"{subject}\n\n{body}")
+            self.notifier.send(bday.email, f"{subject}\n\n{body}")
 
 
 def main():

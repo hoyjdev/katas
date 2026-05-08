@@ -78,7 +78,7 @@ class TestBirthdayGreeter:
 
         BirthdayGreeter(birthday_data, mailer).greet()
 
-        assert mailer.mail.call_args_list == [
+        assert mailer.send.call_args_list == [
             mock.call(
                 "john.doe@example.com",
                 "Subject: Happy birthday!\n\nHappy birthday, dear John!",
