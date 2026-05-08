@@ -40,14 +40,11 @@ class BirthdayGreeter:
     def greet(self):
         today = datetime.date.today()
         birthdays = self.birthday_data.load()
-        for bday in birthdays:
-            if (
-                bday.date_of_birth.month == today.month
-                and bday.date_of_birth.day == today.day
-            ):
-                subject = "Subject: Happy birthday!"
-                body = f"Happy birthday, dear {bday.first_name}!"
-                self.mailer.mail(bday.email, f"{subject}\n\n{body}")
+        matched = Matcher.for_date(today, birthdays)
+        for bday in matched:
+            subject = "Subject: Happy birthday!"
+            body = f"Happy birthday, dear {bday.first_name}!"
+            self.mailer.mail(bday.email, f"{subject}\n\n{body}")
 
 
 def main():
